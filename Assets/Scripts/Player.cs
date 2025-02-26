@@ -6,13 +6,13 @@ public class Player : MonoBehaviour
     float speed = 5f;
 
     [SerializeField]
-    float upperBounds = 6f;
+    float upperBounds = 5f;
     [SerializeField]
     float lowerBounds = -5f;
     [SerializeField]
-    float rightBounds = 10f;
+    float rightBounds = 12f;
     [SerializeField]
-    float leftBounds = -10f;
+    float leftBounds = -12f;
 
     Vector3 position;
 
