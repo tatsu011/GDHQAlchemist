@@ -29,14 +29,21 @@ public class Player : MonoBehaviour
     [SerializeField]
     float _whenCanFire = -1;
 
+    [SerializeField]
+    private int health = 3;
 
+    private SpawnManager spawnManager;
 
     Vector3 position;
+    Vector3 motion;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        spawnManager = GameObject.FindAnyObjectByType<SpawnManager>();
+        //TODO: GameMaster object.
+        if (spawnManager == null)
+            Debug.Log("Spawn Manager is null!", this);
     }
 
     // Update is called once per frame
@@ -75,12 +82,29 @@ public class Player : MonoBehaviour
 
     public void UpdateBounds(Vector4 newBounds)
     {
-
+        //left, right, upper, lower.
+        leftBounds = newBounds[0];
+        rightBounds = newBounds[1];
+        upperBounds = newBounds[2];
+        lowerBounds = newBounds[3];
     }
 
     private void DoMovement()
     {
-        Vector3 motion = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+        //Vector3 motion = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
+        motion.x = Input.GetAxis("Horizontal");
+        motion.y = Input.GetAxis("Vertical");
+        motion.z = 0f;
         transform.Translate(motion * (Time.deltaTime * speed));
+    }
+
+    public void Damage()
+    {
+        health--;
+        if(health <= 0)
+        {
+            spawnManager.OnPlayerDeath();
+            Destroy(gameObject);
+        }
     }
 }
