@@ -18,6 +18,8 @@ public class Projectile : MonoBehaviour
 
         if (Time.time > time)
         {
+            if (!transform.parent.CompareTag("container"))
+                Destroy(transform.parent.gameObject);
             Destroy(gameObject);
         }
         

@@ -25,9 +25,13 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Transform laserContainer;
     [SerializeField]
+    private GameObject doubleshotPrefab;
+    [SerializeField]
     private float fireRate = 2.5f;
     [SerializeField]
     float _whenCanFire = -1;
+    [SerializeField]
+    bool fireDoubleShot;
 
     [SerializeField]
     private int health = 3;
@@ -61,8 +65,16 @@ public class Player : MonoBehaviour
 
     private void FireLaser()
     {
-        Instantiate(laserPrefab, transform.position, Quaternion.identity, laserContainer.transform);
-        _whenCanFire = Time.time + fireRate;
+        if (fireDoubleShot)
+        {
+            Instantiate(doubleshotPrefab, transform.position, Quaternion.identity, laserContainer.transform);
+            _whenCanFire = Time.time + fireRate;
+        }
+        else
+        {
+            Instantiate(laserPrefab, transform.position, Quaternion.identity, laserContainer.transform);
+            _whenCanFire = Time.time + fireRate;
+        }
     }
 
     private void BoundsCheck()
