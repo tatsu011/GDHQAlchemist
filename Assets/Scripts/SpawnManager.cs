@@ -4,10 +4,18 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [Header("Enemy Spawn info")]
     [SerializeField] 
     private GameObject enemyPrefab;
     [SerializeField] 
     private Transform enemyContainer;
+    [Header("Powerup Spawn info")]
+    [SerializeField]
+    private GameObject[] powerUpPrefabs;
+    [SerializeField]
+    private Transform powerUpContainer;
+
+    [Header("General spawn settings")]
     [SerializeField]
     private bool canSpawn = true;
     
@@ -21,6 +29,7 @@ public class SpawnManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(EnemySpawnRoutine());
+        StartCoroutine(PowerupSpawnRoutine());
     }
 
     IEnumerator EnemySpawnRoutine()
@@ -29,6 +38,16 @@ public class SpawnManager : MonoBehaviour
         {
             float randX = Random.Range(spawnXRange.x, spawnXRange.y);
             Instantiate(enemyPrefab, new Vector3(randX, spawnY, 0), Quaternion.identity, enemyContainer);
+            yield return new WaitForSeconds(3);
+        }
+    }
+
+    IEnumerator PowerupSpawnRoutine()
+    {
+        while (canSpawn)
+        {
+            float randX = Random.Range(spawnXRange.x, spawnXRange.y);
+            Instantiate(powerUpPrefabs[0], new Vector3(randX, spawnY, 0), Quaternion.identity, powerUpContainer);
             yield return new WaitForSeconds(3);
         }
     }

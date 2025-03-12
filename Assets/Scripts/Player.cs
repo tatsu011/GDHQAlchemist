@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -31,12 +32,14 @@ public class Player : MonoBehaviour
     [SerializeField]
     float _whenCanFire = -1;
     [SerializeField]
-    bool fireDoubleShot;
+    bool fireDoubleShot = false;
 
     [SerializeField]
     private int health = 3;
 
     private SpawnManager spawnManager;
+
+    private Coroutine doubleShotPowerupRoutine;
 
     Vector3 position;
     Vector3 motion;
@@ -118,5 +121,26 @@ public class Player : MonoBehaviour
             spawnManager.OnPlayerDeath();
             Destroy(gameObject);
         }
+    }
+
+    public void ActivateDoubleshot()
+    {
+        fireDoubleShot = true;
+        if(doubleShotPowerupRoutine == null)
+        {
+            doubleShotPowerupRoutine = StartCoroutine(DoubleShotPowerdownTimer());
+        }
+        else
+        {
+            StopCoroutine(doubleShotPowerupRoutine);
+            doubleShotPowerupRoutine = StartCoroutine(DoubleShotPowerdownTimer());
+        }
+    }
+
+    IEnumerator DoubleShotPowerdownTimer()
+    {
+        yield return new WaitForSeconds(5f);
+        fireDoubleShot = false;
+        doubleShotPowerupRoutine = null;
     }
 }
