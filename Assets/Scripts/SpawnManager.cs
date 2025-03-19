@@ -47,7 +47,8 @@ public class SpawnManager : MonoBehaviour
         while (canSpawn)
         {
             float randX = Random.Range(spawnXRange.x, spawnXRange.y);
-            Instantiate(powerUpPrefabs[0], new Vector3(randX, spawnY, 0), Quaternion.identity, powerUpContainer);
+            int randPrefab = Random.Range(0, powerUpPrefabs.Length);
+            Instantiate(powerUpPrefabs[randPrefab], new Vector3(randX, spawnY, 0), Quaternion.identity, powerUpContainer);
             yield return new WaitForSeconds(3);
         }
     }

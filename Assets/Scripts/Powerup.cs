@@ -55,8 +55,10 @@ public class Powerup : MonoBehaviour
                 case PowerupTypes.Ammopack:
                     break;
                 case PowerupTypes.SpeedBoost:
+                    player.ActivateSpeedBoost();
                     break;
                 case PowerupTypes.Shield:
+                    player.ShieldActive(true);
                     break;
                 default:
                     break;
