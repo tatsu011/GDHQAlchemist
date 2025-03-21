@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int maxShieldHealth = 3;
     [SerializeField]
-    Transform shieldPart;
+    ShieldVisuals shieldPart;
 
     [Header("Speed settings")]
     [SerializeField]
@@ -59,6 +59,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     bool boostActive = false;
 
+    [SerializeField]
+    private int _score;
+
     private SpawnManager spawnManager;
 
     private Coroutine doubleShotPowerupRoutine;
@@ -69,6 +72,7 @@ public class Player : MonoBehaviour
 
     Vector3 position;
     Vector3 motion;
+    
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -78,6 +82,7 @@ public class Player : MonoBehaviour
         //TODO: GameMaster object.
         if (spawnManager == null)
             Debug.Log("Spawn Manager is null!", this);
+        UIManager.Instance.UpdateScore(_score);
     }
 
     // Update is called once per frame
@@ -145,7 +150,7 @@ public class Player : MonoBehaviour
         if(shieldsActive)
         {
             shieldHealth--;
-            shieldPart.SendMessage("DamageShields");
+            shieldPart.DamageShields();
             UIManager.Instance.UpdateShield(shieldHealth);
             if (shieldHealth <= 0)
             {
@@ -158,12 +163,13 @@ public class Player : MonoBehaviour
 
 
         health--;
-        if(health <= 0)
+
+        UIManager.Instance.UpdateHealth(health);
+        if (health <= 0)
         {
             spawnManager.OnPlayerDeath();
             Destroy(gameObject);
         }
-        UIManager.Instance.UpdateHealth(health);
     }
 
     public void ShieldActive(bool isActive)
@@ -173,7 +179,7 @@ public class Player : MonoBehaviour
         shieldHealth = maxShieldHealth;
         if(isActive)
             UIManager.Instance.UpdateShield(shieldHealth);
-        shieldPart.GetComponent<ShieldVisuals>().ResetShields(maxShieldHealth);
+        shieldPart.ResetShields(maxShieldHealth);
     }
 
     public void ActivateDoubleshot()
@@ -215,5 +221,11 @@ public class Player : MonoBehaviour
         boostedMultiplier = 1f;
         speedPowerupRoutine = null;
         
+    }
+
+    public void AddScore(int points)
+    {
+        _score += points;
+        UIManager.Instance.UpdateScore(_score);
     }
 }

@@ -5,6 +5,8 @@ public class Enemy : MonoBehaviour
     [Header("Enemy Attributes")]
     [SerializeField]
     float speed = 5f;
+    [SerializeField]
+    int pointValue = 100;
 
     [Header("Screen bounds")]
     [SerializeField]
@@ -18,12 +20,14 @@ public class Enemy : MonoBehaviour
     [SerializeField]
 
     bool canRespawn = true;
+
+    private Player player;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        player = FindAnyObjectByType<Player>();
     }
 
     // Update is called once per frame
@@ -56,12 +60,14 @@ public class Enemy : MonoBehaviour
     {
         if(other.CompareTag("Player"))
         {
-            other.GetComponent<Player>()?.Damage();
+            player.Damage();
+            player.AddScore(pointValue);
             Destroy(gameObject);
         }
         if(other.CompareTag("playerProjectile"))
         {
             //damage self.
+            player.AddScore(pointValue);
             Destroy(other.gameObject);
             Destroy(gameObject);
         }

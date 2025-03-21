@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI;
+using TMPro;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
@@ -9,6 +10,14 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private Sprite[] shieldSprites;
     [SerializeField] private Sprite[] lifeSprites;
+
+    [SerializeField] private TMP_Text scoreText;
+
+    [SerializeField] private GameObject gameOverText;
+    [SerializeField] private TMP_Text finalScoreText;
+    [SerializeField] private GameObject restartText;
+
+    [SerializeField] private GameManager gameManager;
 
     private static UIManager instance;
     public static UIManager Instance
@@ -19,6 +28,13 @@ public class UIManager : MonoBehaviour
                 Debug.LogError("UI Manager private instance is Null!");
             return instance;
         }
+    }
+
+    public void Start()
+    {
+        gameOverText.SetActive(false);
+        finalScoreText.gameObject.SetActive(false);
+        restartText.SetActive(false);
     }
 
     private void Awake()
@@ -55,8 +71,7 @@ public class UIManager : MonoBehaviour
     {
         if (health >= 3)
         {
-            //lifeMeter.gameObject.SetActive(true); //enable the gameobject.
-            lifeMeter.sprite = lifeSprites[shieldSprites.Length - 1];
+            lifeMeter.sprite = lifeSprites[2];
         }
         if (health == 2)
         {
@@ -67,5 +82,41 @@ public class UIManager : MonoBehaviour
             lifeMeter.sprite = lifeSprites[0];
         }
     }
+
+    public void UpdateScore(int score)
+    {
+        scoreText.text = $"Score: {score}";
+    }
+
+    public void OnPlayerDeath()
+    {
+        gameManager.OnPlayerDeath();
+        finalScoreText.text = $"Final {scoreText.text}";
+        scoreText.gameObject.SetActive(false);
+        StartCoroutine(GameOverSequence());
+        StartCoroutine(DelayFinalScore());
+    }
+
+    IEnumerator GameOverSequence()
+    {
+        while (true)
+        {
+            yield return null;
+            gameOverText.SetActive(true);
+            yield return new WaitForSeconds(1.5f);
+            gameOverText.SetActive(false);
+            yield return new WaitForSeconds(1.5f);
+        }
+    }
+
+    IEnumerator DelayFinalScore()
+    {
+        yield return new WaitForSeconds(5f);
+        finalScoreText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(.5f);
+        restartText.SetActive(true);
+
+    }
+
 
 }

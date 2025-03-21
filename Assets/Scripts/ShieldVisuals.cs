@@ -3,9 +3,6 @@ using UnityEngine;
 public class ShieldVisuals : MonoBehaviour
 {
     [SerializeField]
-    int maxShields = 3;
-
-    [SerializeField]
     int currentShields;
 
     [SerializeField]

@@ -57,7 +57,7 @@ public class SpawnManager : MonoBehaviour
     {
         canSpawn = false;
         Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
-        
+        UIManager.Instance.OnPlayerDeath();
         foreach(Enemy enemy in enemies)
         {
             enemy.OnPlayerDeath();
