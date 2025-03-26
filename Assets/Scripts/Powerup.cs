@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class Powerup : MonoBehaviour
 {
     [SerializeField]
@@ -9,6 +10,8 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     float bottomBounds;
 
+    AudioSource _audioSource;
+
     public enum PowerupTypes
     {
         None, DoubleShot, Tripleshot, Healthpack, Ammopack, SpeedBoost, Shield
@@ -16,11 +19,13 @@ public class Powerup : MonoBehaviour
 
     [SerializeField]
     PowerupTypes powerupType;
+    [SerializeField]
+    private float _audioDuration;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        _audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -39,6 +44,8 @@ public class Powerup : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             Player player = other.GetComponent<Player>();
+            //AudioSource.PlayClipAtPoint(_audioSource.clip, transform.position, _audioSource.volume);
+
 
             switch (powerupType)
             {
@@ -63,7 +70,15 @@ public class Powerup : MonoBehaviour
                 default:
                     break;
             }
-            Destroy(gameObject);
+            OnCollect();
         }
     }
+    private void OnCollect()
+    {
+        _audioSource.Play();
+        
+        speed = 0;
+        Destroy(gameObject, _audioDuration);
+    }
 }
+

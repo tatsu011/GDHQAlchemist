@@ -7,7 +7,8 @@ public class Enemy : MonoBehaviour
     float speed = 5f;
     [SerializeField]
     int pointValue = 100;
-
+    [SerializeField]
+    float _explosionDelay = 0.33f;
     [Header("Screen bounds")]
     [SerializeField]
     float upperBounds = 12f;
@@ -18,8 +19,9 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     float leftBounds = -17f;
     [SerializeField]
-
     bool canRespawn = true;
+    [SerializeField]
+    GameObject _explosionPrefab;
 
     private Player player;
     
@@ -61,16 +63,24 @@ public class Enemy : MonoBehaviour
         if(other.CompareTag("Player"))
         {
             player.Damage();
-            player.AddScore(pointValue);
-            Destroy(gameObject);
+            OnEnemyDeath();
         }
         if(other.CompareTag("playerProjectile"))
         {
             //damage self.
-            player.AddScore(pointValue);
             Destroy(other.gameObject);
-            Destroy(gameObject);
+            OnEnemyDeath();
+
         }
+    }
+
+    private void OnEnemyDeath()
+    {
+        Instantiate(_explosionPrefab, transform.position, Quaternion.identity);
+        player.AddScore(pointValue);
+        GetComponent<Collider>().enabled = false;
+        enabled = false;
+        Destroy(gameObject, .33f);
     }
 
     public void OnPlayerDeath()

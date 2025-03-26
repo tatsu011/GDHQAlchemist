@@ -168,6 +168,10 @@ public class Player : MonoBehaviour
         if (health <= 0)
         {
             spawnManager.OnPlayerDeath();
+            transform.GetChild(0).gameObject.SetActive(false);
+            this.enabled = false;
+            GetComponent<Collider>().enabled = false;
+
             Destroy(gameObject);
         }
     }
