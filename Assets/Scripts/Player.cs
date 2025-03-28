@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
     private float fireRate = 2.5f;
     [SerializeField]
     float _whenCanFire = -1;
+    [SerializeField]
+    private AudioClip _laserSound;
 
     [Header("Health and Shield Settings")]
     [SerializeField]
@@ -40,6 +42,8 @@ public class Player : MonoBehaviour
     private int maxShieldHealth = 3;
     [SerializeField]
     ShieldVisuals shieldPart;
+    [SerializeField]
+    private GameObject[] _damageVisuals;
 
     [Header("Speed settings")]
     [SerializeField]
@@ -73,6 +77,7 @@ public class Player : MonoBehaviour
     Vector3 position;
     Vector3 motion;
     
+
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -110,6 +115,7 @@ public class Player : MonoBehaviour
             Instantiate(laserPrefab, transform.position, Quaternion.identity, laserContainer.transform);
             _whenCanFire = Time.time + fireRate;
         }
+        AudioManager.Instance.PlaySoundAtPlayer(_laserSound);
     }
 
     private void BoundsCheck()
@@ -157,13 +163,23 @@ public class Player : MonoBehaviour
                 shieldsActive = false;
                 ShieldActive(false);
             }
-            
-            return;
+                return;
         }
-
-
         health--;
 
+
+        int rng = Random.Range(0, _damageVisuals.Length);
+        if (health == 2)
+        {
+            _damageVisuals[rng].SetActive(true);
+        }
+        if (health == 1)
+        {
+            if (_damageVisuals[0].activeInHierarchy == true)
+                _damageVisuals[1].SetActive(true);
+            else
+                _damageVisuals[0].SetActive(true);
+        }
         UIManager.Instance.UpdateHealth(health);
         if (health <= 0)
         {
@@ -172,7 +188,7 @@ public class Player : MonoBehaviour
             this.enabled = false;
             GetComponent<Collider>().enabled = false;
 
-            Destroy(gameObject);
+            Destroy(gameObject, 1.0f);
         }
     }
 
@@ -231,5 +247,13 @@ public class Player : MonoBehaviour
     {
         _score += points;
         UIManager.Instance.UpdateScore(_score);
+    }
+
+    public void RestoreHealth()
+    {
+        if (_damageVisuals[0].activeInHierarchy == true)
+            _damageVisuals[0].SetActive(false);
+        else if (_damageVisuals[1].activeInHierarchy == true)
+            _damageVisuals[1].SetActive(false);
     }
 }

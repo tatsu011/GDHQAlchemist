@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -22,7 +23,10 @@ public class Enemy : MonoBehaviour
     bool canRespawn = true;
     [SerializeField]
     GameObject _explosionPrefab;
-
+    [SerializeField]
+    GameObject laserPrefab;
+    [SerializeField]
+    Transform laserSpawner;
     private Player player;
     
 
@@ -30,12 +34,15 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         player = FindAnyObjectByType<Player>();
+        StartCoroutine(FireLaserCoroutine());
     }
 
     // Update is called once per frame
     void Update()
     {
         CalculateMovement();
+
+
     }
 
     private void CalculateMovement()
@@ -56,6 +63,16 @@ public class Enemy : MonoBehaviour
     {
         float rng = Random.Range(leftBounds, rightBounds);
         transform.position = new Vector3(rng, upperBounds, 0);
+    }
+
+    IEnumerator FireLaserCoroutine()
+    {
+        while(player!= null)
+        {
+            Instantiate(laserPrefab, laserSpawner.position, Quaternion.identity);
+            float randomRefireTime = Random.Range(2, 5);
+            yield return new WaitForSeconds(randomRefireTime);
+        }
     }
 
     private void OnTriggerEnter(Collider other)

@@ -4,6 +4,11 @@ public class AudioManager : MonoBehaviour
 {
     private static AudioManager _instance;
 
+    [SerializeField]
+    private AudioSource _clipAudioSource;
+    [SerializeField]
+    private AudioSource _musicAudioSource;
+
     public static AudioManager Instance
     {
         get { return _instance; }
@@ -20,5 +25,10 @@ public class AudioManager : MonoBehaviour
         {
             _instance = this;
         }
+    }
+
+    public void PlaySoundAtPlayer(AudioClip clip)
+    {
+
     }
 }
