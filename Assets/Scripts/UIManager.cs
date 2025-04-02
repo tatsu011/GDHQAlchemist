@@ -16,6 +16,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject gameOverText;
     [SerializeField] private TMP_Text finalScoreText;
     [SerializeField] private GameObject restartText;
+    [SerializeField] private Slider _thrustSlider;
+    [SerializeField] private Image _thrusterImage;
 
     [SerializeField] private GameManager gameManager;
 
@@ -86,6 +88,22 @@ public class UIManager : MonoBehaviour
     public void UpdateScore(int score)
     {
         scoreText.text = $"Score: {score}";
+    }
+
+    public void UpdateThrusterVisual(float engineValue)
+    {
+        if (engineValue < .01f)
+        {
+            _thrustSlider.gameObject.SetActive(false);
+            _thrusterImage.gameObject.SetActive(false);
+        }
+        else
+        {
+            _thrustSlider.gameObject.SetActive(true);
+            _thrusterImage.gameObject.SetActive(true);
+            _thrustSlider.SetValueWithoutNotify(engineValue);
+        }
+        _thrusterImage.fillAmount = engineValue;
     }
 
     public void OnPlayerDeath()

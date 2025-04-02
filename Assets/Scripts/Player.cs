@@ -52,6 +52,22 @@ public class Player : MonoBehaviour
     float boostedMultiplier = 1f;
     [SerializeField]
     float speed = 5f;
+    [SerializeField]
+    float _thrustMultiplier = 1;
+    [SerializeField]
+    float _boostedThrustMultiplier = 2f;
+    [SerializeField]
+    bool _isThrustActive;
+    [SerializeField]
+    float _engineHeat = 0f;
+    [SerializeField]
+    private float _heatingRate = 2f;
+    [SerializeField]
+    private float _coolingRate = 1.5f;
+    [SerializeField]
+    private float _maxEngineHeat = 100f;
+    [SerializeField]
+    private bool _isEngineOverheated = false;
 
     [Header("Powerup settings")]
     [SerializeField]
@@ -88,11 +104,14 @@ public class Player : MonoBehaviour
         if (spawnManager == null)
             Debug.Log("Spawn Manager is null!", this);
         UIManager.Instance.UpdateScore(_score);
+        UIManager.Instance.UpdateThrusterVisual(_engineHeat);
     }
 
     // Update is called once per frame
     void Update()
     {
+        BoostCheck();
+
         DoMovement();
 
         BoundsCheck();
@@ -101,6 +120,48 @@ public class Player : MonoBehaviour
         {
             FireLaser();
         }
+    }
+
+    private void BoostCheck()
+    {
+        if (_engineHeat <= 100)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftShift) && !_isEngineOverheated)
+            {
+                _isThrustActive = true;
+                _thrustMultiplier = _boostedThrustMultiplier;
+            }
+            if (Input.GetKeyUp(KeyCode.LeftShift) || _isEngineOverheated)
+            {
+                _isThrustActive = false;
+                _thrustMultiplier = 1f;
+            }
+        }
+        else if(_engineHeat > 100)
+        {
+            _isThrustActive = false;
+        }
+
+        if (_isThrustActive && _engineHeat < _maxEngineHeat)
+        {
+            _engineHeat += _heatingRate * Time.deltaTime;
+        }
+        if (!_isThrustActive && _engineHeat > 0)
+            _engineHeat -= _coolingRate * Time.deltaTime;
+
+        if (_engineHeat > _maxEngineHeat)
+        {
+            _isEngineOverheated = true;
+            _engineHeat = _maxEngineHeat;
+        }
+        if (_engineHeat < 0)
+        {
+            _isEngineOverheated = false;
+            _engineHeat = 0;
+        }
+
+        UIManager.Instance.UpdateThrusterVisual(_engineHeat / _maxEngineHeat);
+
     }
 
     private void FireLaser()
@@ -148,7 +209,7 @@ public class Player : MonoBehaviour
         motion.x = Input.GetAxis("Horizontal");
         motion.y = Input.GetAxis("Vertical");
         motion.z = 0f;
-        transform.Translate(motion * (Time.deltaTime * boostedMultiplier * speed));
+        transform.Translate(motion * (Time.deltaTime * boostedMultiplier * _thrustMultiplier * speed));
     }
 
     public void Damage()
