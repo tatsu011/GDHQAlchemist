@@ -32,10 +32,16 @@ public class Player : MonoBehaviour
     float _whenCanFire = -1;
     [SerializeField]
     private AudioClip _laserSound;
+    [SerializeField]
+    int _ammoCount = 15;
+    [SerializeField]
+    private AudioClip _emptySound;
 
     [Header("Health and Shield Settings")]
     [SerializeField]
     private int health = 3;
+    [SerializeField]
+    private int maxHealth = 3;
     [SerializeField]
     private int shieldHealth = 3;
     [SerializeField]
@@ -105,6 +111,7 @@ public class Player : MonoBehaviour
             Debug.Log("Spawn Manager is null!", this);
         UIManager.Instance.UpdateScore(_score);
         UIManager.Instance.UpdateThrusterVisual(_engineHeat);
+        UIManager.Instance.UpdateAmmo(_ammoCount);
     }
 
     // Update is called once per frame
@@ -166,17 +173,27 @@ public class Player : MonoBehaviour
 
     private void FireLaser()
     {
-        if (fireDoubleShot)
+        if (_ammoCount > 0)
         {
-            Instantiate(doubleshotPrefab, transform.position, Quaternion.identity, laserContainer.transform);
-            _whenCanFire = Time.time + fireRate;
+            if (fireDoubleShot)
+            {
+                Instantiate(doubleshotPrefab, transform.position, Quaternion.identity, laserContainer.transform);
+                _whenCanFire = Time.time + fireRate;
+            }
+            else
+            {
+                Instantiate(laserPrefab, transform.position, Quaternion.identity, laserContainer.transform);
+                _whenCanFire = Time.time + fireRate;
+            }
+            AudioManager.Instance.PlaySoundAtPlayer(_laserSound);
+            _ammoCount--;
+            UIManager.Instance.UpdateAmmo(_ammoCount);
         }
         else
         {
-            Instantiate(laserPrefab, transform.position, Quaternion.identity, laserContainer.transform);
-            _whenCanFire = Time.time + fireRate;
+
+            AudioManager.Instance.PlaySoundAtPlayer(_emptySound);
         }
-        AudioManager.Instance.PlaySoundAtPlayer(_laserSound);
     }
 
     private void BoundsCheck()
@@ -316,5 +333,21 @@ public class Player : MonoBehaviour
             _damageVisuals[0].SetActive(false);
         else if (_damageVisuals[1].activeInHierarchy == true)
             _damageVisuals[1].SetActive(false);
+    }
+
+    internal void addAmmo(int contentsAmount)
+    {
+        _ammoCount += contentsAmount;
+        UIManager.Instance.UpdateAmmo(_ammoCount);
+    }
+
+    internal void addHealth(int contentsAmount)
+    {
+        if (health + contentsAmount > maxHealth)
+            health = maxHealth;
+        else
+            health += contentsAmount;
+        RestoreHealth();
+        UIManager.Instance.UpdateHealth(health);
     }
 }

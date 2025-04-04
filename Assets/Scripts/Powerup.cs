@@ -10,6 +10,9 @@ public class Powerup : MonoBehaviour
     [SerializeField]
     float bottomBounds;
 
+    [SerializeField]
+    int _contentsAmount;
+
     AudioSource _audioSource;
 
     public enum PowerupTypes
@@ -58,8 +61,10 @@ public class Powerup : MonoBehaviour
                 case PowerupTypes.Tripleshot:
                     break;
                 case PowerupTypes.Healthpack:
+                    player.addHealth(_contentsAmount);
                     break;
                 case PowerupTypes.Ammopack:
+                    player.addAmmo(_contentsAmount);
                     break;
                 case PowerupTypes.SpeedBoost:
                     player.ActivateSpeedBoost();

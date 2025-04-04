@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using System;
 
 public class UIManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Sprite[] lifeSprites;
 
     [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text ammoText;
 
     [SerializeField] private GameObject gameOverText;
     [SerializeField] private TMP_Text finalScoreText;
@@ -136,5 +138,8 @@ public class UIManager : MonoBehaviour
 
     }
 
-
+    internal void UpdateAmmo(int ammoCount)
+    {
+        ammoText.text = $"--{ammoCount}";
+    }
 }
