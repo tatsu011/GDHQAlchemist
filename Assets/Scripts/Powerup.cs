@@ -17,7 +17,7 @@ public class Powerup : MonoBehaviour
 
     public enum PowerupTypes
     {
-        None, DoubleShot, Tripleshot, Healthpack, Ammopack, SpeedBoost, Shield
+        None, DoubleShot, Tripleshot, Healthpack, Ammopack, SpeedBoost, Shield, Gatling
     }
 
     [SerializeField]
@@ -71,6 +71,9 @@ public class Powerup : MonoBehaviour
                     break;
                 case PowerupTypes.Shield:
                     player.ShieldActive(true);
+                    break;
+                case PowerupTypes.Gatling:
+                    player.ActivateGatling();
                     break;
                 default:
                     break;

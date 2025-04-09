@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using System.Collections;
 using UnityEngine;
 
@@ -36,6 +37,15 @@ public class Player : MonoBehaviour
     int _ammoCount = 15;
     [SerializeField]
     private AudioClip _emptySound;
+    [SerializeField]
+    Transform[] _gatlingPoints;
+    [SerializeField]
+    bool _gatlingUsesAmmo = false;
+    int _gatlingPointCounter = 0;
+    [SerializeField]
+    float _gatlingFireRate = 0.1f;
+    [SerializeField]
+    private bool _gatlingActive = false;
 
     [Header("Health and Shield Settings")]
     [SerializeField]
@@ -87,6 +97,11 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private int _score;
+
+    private float _lastHitTime = 0f;
+
+    [SerializeField]
+    private float _invincibilityTime = 0.5f;
 
     private SpawnManager spawnManager;
 
@@ -173,21 +188,33 @@ public class Player : MonoBehaviour
 
     private void FireLaser()
     {
-        if (_ammoCount > 0)
+        if (_ammoCount > 0 )
         {
-            if (fireDoubleShot)
+            if (_gatlingActive)
+            {
+                int point = _gatlingPointCounter % _gatlingPoints.Length;
+                Instantiate(laserPrefab, _gatlingPoints[point].position, Quaternion.identity, laserContainer.transform);
+                _gatlingPointCounter++;
+            }
+            else if (fireDoubleShot)
             {
                 Instantiate(doubleshotPrefab, transform.position, Quaternion.identity, laserContainer.transform);
-                _whenCanFire = Time.time + fireRate;
+
             }
             else
             {
                 Instantiate(laserPrefab, transform.position, Quaternion.identity, laserContainer.transform);
-                _whenCanFire = Time.time + fireRate;
+
             }
             AudioManager.Instance.PlaySoundAtPlayer(_laserSound);
             _ammoCount--;
             UIManager.Instance.UpdateAmmo(_ammoCount);
+
+
+            if (_gatlingActive)
+                _whenCanFire = Time.time + _gatlingFireRate;
+            else
+                _whenCanFire = Time.time + fireRate;
         }
         else
         {
@@ -231,6 +258,9 @@ public class Player : MonoBehaviour
 
     public void Damage()
     {
+        if (_lastHitTime + _invincibilityTime > Time.time)
+            return;
+
         if(shieldsActive)
         {
             shieldHealth--;
@@ -244,7 +274,7 @@ public class Player : MonoBehaviour
                 return;
         }
         health--;
-
+        _lastHitTime = Time.time;
 
         int rng = Random.Range(0, _damageVisuals.Length);
         if (health == 2)
@@ -349,5 +379,20 @@ public class Player : MonoBehaviour
             health += contentsAmount;
         RestoreHealth();
         UIManager.Instance.UpdateHealth(health);
+    }
+
+    internal void ActivateGatling()
+    {
+        _gatlingActive = true;
+        _gatlingPointCounter = 0;
+        StartCoroutine(GatlingPowerDownRoutine());
+        if (_ammoCount < 20)
+            addAmmo(50);
+    }
+
+    IEnumerator GatlingPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5f);
+        _gatlingActive = false;
     }
 }

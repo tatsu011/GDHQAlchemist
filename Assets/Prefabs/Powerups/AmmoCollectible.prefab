@@ -206,7 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
-  bottomBounds: 0
+  bottomBounds: -12
   _contentsAmount: 15
   powerupType: 4
   _audioDuration: 0
