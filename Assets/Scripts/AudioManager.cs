@@ -9,6 +9,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField]
     private AudioSource _musicAudioSource;
 
+    bool _audioLock;
+
     public static AudioManager Instance
     {
         get { return _instance; }
@@ -30,6 +32,22 @@ public class AudioManager : MonoBehaviour
     public void PlaySoundAtPlayer(AudioClip clip)
     {
         _clipAudioSource.clip = clip;
+        if (_clipAudioSource.isPlaying && _audioLock)
+            return;
         _clipAudioSource.Play();
+    }
+
+    public void PlayAndLockClip(AudioClip clip)
+    {
+        _audioLock = true;
+        _clipAudioSource.clip = clip;
+        if (_clipAudioSource.isPlaying)
+            return;
+        _clipAudioSource.Play();
+    }
+
+    public void PlayMusicAtPlayer(AudioClip clip)
+    {
+
     }
 }

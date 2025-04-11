@@ -22,13 +22,13 @@ public class Player : MonoBehaviour
 
     [Header("Laser Settings")]
     [SerializeField] 
-    private GameObject laserPrefab;
+    private GameObject _laserPrefab;
     [SerializeField]
     private Transform laserContainer;
     [SerializeField]
     private GameObject doubleshotPrefab;
     [SerializeField]
-    private float fireRate = 2.5f;
+    private float _fireRate = 2.5f;
     [SerializeField]
     float _whenCanFire = -1;
     [SerializeField]
@@ -46,6 +46,12 @@ public class Player : MonoBehaviour
     float _gatlingFireRate = 0.1f;
     [SerializeField]
     private bool _gatlingActive = false;
+    [SerializeField]
+    GameObject _starBurstPrefab;
+    [SerializeField]
+    float _starBurstFireRate = 5f;
+    [SerializeField]
+    bool _starBurstActive;
 
     [Header("Health and Shield Settings")]
     [SerializeField]
@@ -84,6 +90,8 @@ public class Player : MonoBehaviour
     private float _maxEngineHeat = 100f;
     [SerializeField]
     private bool _isEngineOverheated = false;
+    [SerializeField]
+    FireType _weaponFireType;
 
     [Header("Powerup settings")]
     [SerializeField]
@@ -188,38 +196,50 @@ public class Player : MonoBehaviour
 
     private void FireLaser()
     {
-        if (_ammoCount > 0 )
+        if (_ammoCount > 0)
         {
-            if (_gatlingActive)
-            {
-                int point = _gatlingPointCounter % _gatlingPoints.Length;
-                Instantiate(laserPrefab, _gatlingPoints[point].position, Quaternion.identity, laserContainer.transform);
-                _gatlingPointCounter++;
-            }
-            else if (fireDoubleShot)
-            {
-                Instantiate(doubleshotPrefab, transform.position, Quaternion.identity, laserContainer.transform);
 
-            }
-            else
+            switch (_weaponFireType)
             {
-                Instantiate(laserPrefab, transform.position, Quaternion.identity, laserContainer.transform);
-
+                case FireType.Single:
+                    Instantiate(_laserPrefab, transform.position, Quaternion.identity, laserContainer.transform);
+                    break;
+                case FireType.Double:
+                    Instantiate(doubleshotPrefab, transform.position, Quaternion.identity, laserContainer.transform);
+                    break;
+                case FireType.Gatling:
+                    int point = _gatlingPointCounter % _gatlingPoints.Length;
+                    Instantiate(_laserPrefab, _gatlingPoints[point].position, Quaternion.identity, laserContainer.transform);
+                    _gatlingPointCounter++;
+                    break;
+                case FireType.Starburst:
+                    //instant
+                    break;
+                default:
+                    break;
             }
             AudioManager.Instance.PlaySoundAtPlayer(_laserSound);
-            _ammoCount--;
+
             UIManager.Instance.UpdateAmmo(_ammoCount);
 
+            if (_starBurstActive)
+            {
 
+            }
             if (_gatlingActive)
+            {
                 _whenCanFire = Time.time + _gatlingFireRate;
+            }
             else
-                _whenCanFire = Time.time + fireRate;
+            {
+                _ammoCount--;
+                _whenCanFire = Time.time + _fireRate;
+            }
         }
         else
         {
 
-            AudioManager.Instance.PlaySoundAtPlayer(_emptySound);
+            AudioManager.Instance.PlayAndLockClip(_emptySound);
         }
     }
 
@@ -339,7 +359,7 @@ public class Player : MonoBehaviour
     IEnumerator DoubleShotPowerdownTimer()
     {
         yield return new WaitForSeconds(5f);
-        fireDoubleShot = false;
+        _weaponFireType = FireType.Single;
         doubleShotPowerupRoutine = null;
     }
 
@@ -393,6 +413,6 @@ public class Player : MonoBehaviour
     IEnumerator GatlingPowerDownRoutine()
     {
         yield return new WaitForSeconds(5f);
-        _gatlingActive = false;
+        _weaponFireType = FireType.Single;
     }
 }

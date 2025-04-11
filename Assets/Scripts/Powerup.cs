@@ -15,10 +15,7 @@ public class Powerup : MonoBehaviour
 
     AudioSource _audioSource;
 
-    public enum PowerupTypes
-    {
-        None, DoubleShot, Tripleshot, Healthpack, Ammopack, SpeedBoost, Shield, Gatling
-    }
+
 
     [SerializeField]
     PowerupTypes powerupType;
