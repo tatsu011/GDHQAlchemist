@@ -6,7 +6,11 @@ public class Player : MonoBehaviour
 {
 
     [Header("Player stats")]
-
+    [Header("Camera Shake Settings")]
+    [SerializeField]
+    float _cameraShakeDuration = .5f;
+    [SerializeField]
+    float _cameraShakeIntensity = 1f;
 
     [Header("Screen bounds")]
     [SerializeField]
@@ -117,7 +121,7 @@ public class Player : MonoBehaviour
 
     private Coroutine speedPowerupRoutine;
 
-
+    private CameraManager _cameraManager;
 
     Vector3 position;
     Vector3 motion;
@@ -135,6 +139,7 @@ public class Player : MonoBehaviour
         UIManager.Instance.UpdateScore(_score);
         UIManager.Instance.UpdateThrusterVisual(_engineHeat);
         UIManager.Instance.UpdateAmmo(_ammoCount);
+        _cameraManager = Camera.main.GetComponent<CameraManager>();
     }
 
     // Update is called once per frame
@@ -213,7 +218,7 @@ public class Player : MonoBehaviour
                     _gatlingPointCounter++;
                     break;
                 case FireType.Starburst:
-                    //instant
+                    Instantiate(_starBurstPrefab, transform.position, Quaternion.identity, laserContainer.transform);
                     break;
                 default:
                     break;
@@ -224,7 +229,7 @@ public class Player : MonoBehaviour
 
             if (_starBurstActive)
             {
-
+                _whenCanFire = Time.time + _starBurstFireRate;
             }
             if (_gatlingActive)
             {
@@ -295,6 +300,7 @@ public class Player : MonoBehaviour
         }
         health--;
         _lastHitTime = Time.time;
+        _cameraManager.CameraShake(_cameraShakeDuration, _cameraShakeIntensity);
 
         int rng = Random.Range(0, _damageVisuals.Length);
         if (health == 2)

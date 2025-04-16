@@ -6,7 +6,6 @@ public class Projectile : MonoBehaviour
     [SerializeField] float _flyTime = 5f;
     [SerializeField] float _time;
     [SerializeField] bool _isStarburst;
-    [SerializeField] GameObject _BurstExplosion;
     [SerializeField] Transform _laserContainer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -25,7 +24,12 @@ public class Projectile : MonoBehaviour
         {
             if(_isStarburst)
             {
-
+                foreach(Transform child in GetComponentInChildren<Transform>())
+                {
+                    if (!child.gameObject.activeSelf)
+                        child.gameObject.SetActive(true);
+                    child.SetParent(_laserContainer);
+                }
             }
 
             if (!transform.parent.CompareTag("container"))
