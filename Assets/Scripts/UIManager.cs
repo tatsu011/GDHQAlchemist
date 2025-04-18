@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private TMP_Text scoreText;
     [SerializeField] private TMP_Text ammoText;
+    [SerializeField] private TMP_Text waveCounterText;
 
     [SerializeField] private GameObject gameOverText;
     [SerializeField] private TMP_Text finalScoreText;
@@ -142,4 +143,11 @@ public class UIManager : MonoBehaviour
     {
         ammoText.text = $"--{ammoCount}";
     }
+
+    public void UpdateWaveText(int waveNum)
+    {
+        waveCounterText.text = $"Wave: {waveNum}";
+    }
+
+
 }

@@ -36,12 +36,12 @@ public class Enemy_2 : MonoBehaviour
     private float _stopPoint;
     private bool _startCircle;
     private float _currentAngle;
-    private Vector2 _radius;
+    private float _radius;
     [SerializeField]
     float maxTimer = 0f;
     Coroutine _circlingRoutine;
-    Vector3 _centerPoint;
-
+    Vector2 _centerPoint;
+    private float _angluarSpeed;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -53,20 +53,29 @@ public class Enemy_2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DoMovement();
+    }
+
+    private void DoMovement()
+    {
         if (_startCircle == false)
         {
             transform.Translate(Vector3.down * (speed * Time.deltaTime));
         }
-        else if (_startCircle == false && transform.position.y >= _stopPoint)
+
+        if (_startCircle == false && transform.position.y <= _stopPoint && _circlingRoutine == null)
         {
             _startCircle = true;
             _centerPoint = transform.position;
+            _centerPoint.y -= _radius;
             _circlingRoutine = StartCoroutine(CircleTimerRoutine());
         }
 
         if (_startCircle)
         {
-
+            _currentAngle += _angluarSpeed /*+ Time.deltaTime*/;
+            Vector2 offset = new Vector2(Mathf.Sin(_currentAngle), Mathf.Cos(_currentAngle)) * _radius;
+            transform.position = _centerPoint + offset;
         }
     }
 

@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using System.Collections;
 using UnityEngine;
 
@@ -6,7 +7,7 @@ public class SpawnManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [Header("Enemy Spawn info")]
     [SerializeField] 
-    private GameObject enemyPrefab;
+    private GameObject[] enemyPrefab;
     [SerializeField] 
     private Transform enemyContainer;
     [Header("Powerup Spawn info")]
@@ -26,6 +27,37 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private float spawnY;
 
+    [Header("Wave Settings")]
+    [SerializeField]
+    int _waveCount = 0;
+    [SerializeField]
+    int _enemiesInWave;
+    [SerializeField]
+    int _currentEnemies = 0;
+    [SerializeField]
+    int _spawnedEnemies;
+    [SerializeField]
+    int _finalWave = 2;
+
+    private static SpawnManager instance;
+    public static SpawnManager Instance
+    {
+        get
+        {
+            if (instance == null)
+                Debug.LogError("UI Manager private instance is Null!");
+            return instance;
+        }
+    }
+
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(this);
+    }
+
     private void Start()
     {
         StartCoroutine(EnemySpawnRoutine());
@@ -34,11 +66,25 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator EnemySpawnRoutine()
     {
-        while(canSpawn)
+        while(canSpawn && _waveCount < _finalWave)
         {
-            float randX = Random.Range(spawnXRange.x, spawnXRange.y);
-            Instantiate(enemyPrefab, new Vector3(randX, spawnY, 0), Quaternion.identity, enemyContainer);
-            yield return new WaitForSeconds(3);
+            _waveCount++;
+            _enemiesInWave = _waveCount * 10;
+            _currentEnemies = 0;
+            _spawnedEnemies = 0;
+            UIManager.Instance.UpdateWaveText(_waveCount);
+            while (_currentEnemies < _enemiesInWave && canSpawn)
+            {
+                float randX = Random.Range(spawnXRange.x, spawnXRange.y);
+                GameObject enemyToSpawn = enemyPrefab[Random.Range(0, enemyPrefab.Length)];
+                Instantiate(enemyToSpawn, new Vector3(randX, spawnY, 0), Quaternion.identity, enemyContainer);
+                yield return new WaitForSeconds(3);
+            }
+            while(_currentEnemies > 0)
+            {
+                yield return null;
+            }
+            yield return new WaitForSeconds(5);
         }
     }
 
@@ -62,6 +108,11 @@ public class SpawnManager : MonoBehaviour
         {
             enemy.OnPlayerDeath();
         }
+    }
+
+    public void OnEnemyDeath()
+    {
+        _currentEnemies--;
     }
 
 }
