@@ -68,6 +68,7 @@ public class SpawnManager : MonoBehaviour
     {
         while(canSpawn && _waveCount < _finalWave)
         {
+            yield return new WaitForSeconds(5);
             _waveCount++;
             _enemiesInWave = _waveCount * 10;
             _currentEnemies = 0;
@@ -78,13 +79,13 @@ public class SpawnManager : MonoBehaviour
                 float randX = Random.Range(spawnXRange.x, spawnXRange.y);
                 GameObject enemyToSpawn = enemyPrefab[Random.Range(0, enemyPrefab.Length)];
                 Instantiate(enemyToSpawn, new Vector3(randX, spawnY, 0), Quaternion.identity, enemyContainer);
+                _currentEnemies++;
                 yield return new WaitForSeconds(3);
             }
             while(_currentEnemies > 0)
             {
                 yield return null;
             }
-            yield return new WaitForSeconds(5);
         }
     }
 

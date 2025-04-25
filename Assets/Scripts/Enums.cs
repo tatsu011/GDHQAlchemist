@@ -1,6 +1,6 @@
 public enum PowerupTypes
 {
-    None, DoubleShot, Tripleshot, Healthpack, Ammopack, SpeedBoost, Shield, Gatling, Starburst
+    None, DoubleShot, Tripleshot, Healthpack, Ammopack, SpeedBoost, Shield, Gatling, Starburst, ControlJam
 }
 
 public enum FireType

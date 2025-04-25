@@ -59,6 +59,7 @@ MonoBehaviour:
   laserPrefab: {fileID: 5788644690203471214, guid: dd28cf5329d8e52469b2eaa65c030f5d, type: 3}
   laserSpawner: {fileID: 0}
   _fixedPoint: {x: 0, y: 0}
+  _radius: 2
   maxTimer: 0
 --- !u!65 &561265029842228533
 BoxCollider:

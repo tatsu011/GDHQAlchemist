@@ -96,6 +96,8 @@ public class Player : MonoBehaviour
     private bool _isEngineOverheated = false;
     [SerializeField]
     FireType _weaponFireType;
+    [SerializeField]
+    private float _jammedControlsMultiplier = 1;
 
     [Header("Powerup settings")]
     [SerializeField]
@@ -278,7 +280,7 @@ public class Player : MonoBehaviour
         motion.x = Input.GetAxis("Horizontal");
         motion.y = Input.GetAxis("Vertical");
         motion.z = 0f;
-        transform.Translate(motion * (Time.deltaTime * boostedMultiplier * _thrustMultiplier * speed));
+        transform.Translate(motion * (Time.deltaTime * boostedMultiplier * _thrustMultiplier * _jammedControlsMultiplier * speed));
     }
 
     public void Damage()
@@ -421,4 +423,17 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5f);
         _weaponFireType = FireType.Single;
     }
+
+    internal void ActivateJammedControls()
+    {
+        _jammedControlsMultiplier = -1;
+        StartCoroutine(JammedControlsCooldown());
+    }
+
+    IEnumerator JammedControlsCooldown()
+    {
+        yield return new WaitForSeconds(5f);
+        _jammedControlsMultiplier = 1;
+    }
+
 }

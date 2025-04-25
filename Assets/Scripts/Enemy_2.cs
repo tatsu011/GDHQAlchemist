@@ -36,6 +36,7 @@ public class Enemy_2 : MonoBehaviour
     private float _stopPoint;
     private bool _startCircle;
     private float _currentAngle;
+    [SerializeField]
     private float _radius;
     [SerializeField]
     float maxTimer = 0f;
@@ -74,7 +75,7 @@ public class Enemy_2 : MonoBehaviour
         if (_startCircle)
         {
             _currentAngle += _angluarSpeed /*+ Time.deltaTime*/;
-            Vector2 offset = new Vector2(Mathf.Sin(_currentAngle), Mathf.Cos(_currentAngle)) * _radius;
+            Vector2 offset = new Vector2(Mathf.Sin(_currentAngle) * _radius, Mathf.Cos(_currentAngle) * _radius);
             transform.position = _centerPoint + offset;
         }
     }
