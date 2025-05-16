@@ -14,6 +14,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] powerUpPrefabs;
     [SerializeField]
+    private int[] _powerUpWeights;
+    [SerializeField]
     private Transform powerUpContainer;
 
     [Header("General spawn settings")]
@@ -39,6 +41,8 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     int _finalWave = 2;
 
+    int _totalWeight;
+
     private static SpawnManager instance;
     public static SpawnManager Instance
     {
@@ -62,6 +66,13 @@ public class SpawnManager : MonoBehaviour
     {
         StartCoroutine(EnemySpawnRoutine());
         StartCoroutine(PowerupSpawnRoutine());
+
+        //PUPs calculations
+        _totalWeight = 0;
+        foreach (int i in _powerUpWeights)
+            _totalWeight += i;
+        for (int j = 0; j < _powerUpWeights.Length; j++)
+            Debug.Log($"Powerup: {powerUpPrefabs[j].GetComponent<Powerup>().GetPowerup().ToString()} : {(float)_powerUpWeights[j] / (float)_totalWeight}");
     }
 
     IEnumerator EnemySpawnRoutine()

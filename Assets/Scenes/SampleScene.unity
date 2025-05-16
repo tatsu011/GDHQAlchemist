@@ -1772,6 +1772,7 @@ MonoBehaviour:
   - {fileID: 6083833852717542952, guid: b64af10a9f9e8f94a8f2ddf13e90d9d4, type: 3}
   - {fileID: 3428316328970792234, guid: 15c330dc442d37e41b7abf009c275847, type: 3}
   - {fileID: 3385600336272535425, guid: bdd0660916e4a6844be58bc7adfa92d0, type: 3}
+  _powerUpWeights: 030000000300000002000000050000000100000001000000
   powerUpContainer: {fileID: 202063899}
   canSpawn: 1
   spawnXRange: {x: -10, y: 10}

@@ -85,5 +85,10 @@ public class Powerup : MonoBehaviour
         speed = 0;
         Destroy(gameObject, _audioDuration);
     }
+
+    public PowerupTypes GetPowerup()
+    {
+        return powerupType;
+    }
 }
 
